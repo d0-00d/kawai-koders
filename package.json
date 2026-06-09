@@ -1,0 +1,16 @@
+{
+  "name": "project-root",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
+  "scripts": {
+    "install": "npm install --workspaces",
+    "start": "npm run start:frontend",
+    "start:frontend": "npm --prefix frontend start",
+    "start:backend": "npm --prefix backend run dev",
+    "build:frontend": "npm --prefix frontend run build"
+  }
+}
