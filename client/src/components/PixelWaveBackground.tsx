@@ -1,29 +1,36 @@
-import React, { useRef, useEffect } from 'react';
-
 /**
- * PixelWaveBackground
+ * PixelWaveBackground — Kohnrad
  *
- * Renders a full-screen animated pixel/mosaic background that simulates an ocean shoreline effect.
- * It uses HTML5 Canvas for performance.
+ * Vertical bottom-to-top pixel tide with cubic-eased startup.
+ *
+ * Wave direction: BOTTOM (ocean body) → TOP (empty/dark)
+ * waveY(col, t) defines the wave FRONT row per column — organic horizontal undulation.
+ * Cells BELOW waveY are filled (ocean), ABOVE are empty.
+ *
+ * Intro: horizontal wave unrolls from off-screen right to left.
+ * Session: plays once per tab session (sessionStorage). Reload skips to mid-loop.
+ * Dev: set SKIP_INTRO = true to always skip, or clear sessionStorage manually.
  *
  * Tuning:
- * - CELL_SIZE: Adjust the size of the pixels (default 10)
- * - Wave speed/math: Adjust the time multiplier inside `time * X` within waveY function
- * - Colours: Modify COLOR_PRIMARY, etc.
- *
- * Wave Math:
- * The wave is modeled as a sweeping line from bottom-left to top-right. We use sine functions
- * layered together (primary wave, secondary ripple, slow swell) to create natural-looking,
- * organic wave motion. Cells below the wave are fully filled, cells in the wave are partially filled
- * (transition), and cells above are 'empty'.
+ * - CELL_SIZE: pixel grid size (default 10)
+ * - rows * 0.75: wave front baseline position (lower = more ocean coverage)
+ * - time multipliers in waveY: wave animation speed
+ * - PARTICLE_MAX_SPEED: orange dot drift speed
  */
+
+import React, { useRef, useEffect } from 'react';
+
+// To force intro replay: sessionStorage.removeItem('kohnrad_intro_played') in browser console
+// To always skip: set SKIP_INTRO = true at top of file
+const SKIP_INTRO = false;
+const HAS_PLAYED_KEY = 'kohnrad_intro_played';
 
 const CELL_SIZE = 10;
 const COLOR_BG = '#0a0a0a';
 const COLOR_PRIMARY = '#aa8f2cff'; // acid lime green
 const COLOR_SECONDARY = '#ab6f42ff'; // burnt orange
-const COLOR_WHITE = 'rgba(255,255,255,0.03)'; // softer static cells
-const COLOR_GRID = 'rgba(255,255,255,0.015)'; // softer grid lines
+const COLOR_WHITE = 'rgba(255,255,255,0.01)'; // softer static cells
+const COLOR_GRID = 'rgba(255,255,255,0.005)'; // softer grid lines
 
 const PARTICLE_MAX_SPEED = 0.28;      // max velocity magnitude
 const PARTICLE_LERP = 0.012;         // direction change smoothness
@@ -52,9 +59,15 @@ interface DriftParticle {
   changeInterval: number; // randomized interval between nudges: 180–420 frames
 }
 
+type IntroPhase = 'entering' | 'done';
+
 const PixelWaveBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<DriftParticle[]>([]);
+  const introPhaseRef = useRef<IntroPhase>('entering');
+  const introTimeRef = useRef<number>(0);
+  const clockRef = useRef<number>(0);
+  const lastTimeRef = useRef<number | null>(null);
 
   useEffect(() => {
     console.log('PixelWaveBackground mounted');
@@ -70,8 +83,18 @@ const PixelWaveBackground: React.FC = () => {
       return;
     }
 
+    // Session Memory
+    const alreadyPlayed = SKIP_INTRO || sessionStorage.getItem(HAS_PLAYED_KEY) === 'true';
+    if (alreadyPlayed) {
+      introPhaseRef.current = 'done';
+      clockRef.current = 8.0; // start mid-loop
+    } else {
+      introPhaseRef.current = 'entering';
+      clockRef.current = 0;
+      introTimeRef.current = 0;
+    }
+
     let animationFrameId: number;
-    let time = 0;
 
     let columns = 0;
     let rows = 0;
@@ -102,7 +125,7 @@ const PixelWaveBackground: React.FC = () => {
       // Initialize Particles
       const numParticles = Math.floor((canvas.width * canvas.height) / 28000);
       const particles: DriftParticle[] = [];
-      
+
       for (let i = 0; i < numParticles; i++) {
         // Density zones: 60% in lower 75% of screen, 40% full random
         let yPos;
@@ -134,20 +157,10 @@ const PixelWaveBackground: React.FC = () => {
       particlesRef.current = particles;
     };
 
-    const waveY = (col: number, t: number) => {
-      // Flatter, more horizontal wave resembling a calm seashore
-      return (
-        rows * 0.75  // Set wave much lower on the screen (75% down)
-        + Math.sin(col * 0.05 + t * 0.4) * 3    // Long, gentle primary wave
-        + Math.sin(col * 0.1 + t * 0.6) * 1.5   // Secondary ripple
-        + Math.sin(col * 0.02 + t * 0.2) * 2    // Very slow swell
-      );
-    };
-
-    const bandWidthFunc = (col: number, t: number) => {
-      // Softer, more subtle foam transition area
-      return 5 + Math.sin(col * 0.1 + t * 0.3) * 2;
-    };
+    // Easing functions
+    const easeOutCubic = (t: number): number => 1 - Math.pow(1 - t, 3);
+    const clamp = (val: number, min: number, max: number): number =>
+      Math.max(min, Math.min(max, val));
 
     const draw = () => {
       if (canvas.width === 0 || canvas.height === 0) {
@@ -155,7 +168,44 @@ const PixelWaveBackground: React.FC = () => {
         return;
       }
 
-      time += 0.016; // approx 60fps
+      // Clock system
+      const now = performance.now() / 1000;
+      if (lastTimeRef.current === null) lastTimeRef.current = now;
+      const delta = Math.min(now - lastTimeRef.current, 0.05);
+      lastTimeRef.current = now;
+      clockRef.current += delta;
+      
+      if (introPhaseRef.current !== 'done') {
+        introTimeRef.current += delta;
+      }
+      
+      const time = clockRef.current;
+
+      let introXOffset = 0;
+      let easedT = 1;
+
+      if (introPhaseRef.current === 'entering') {
+        const t = clamp(introTimeRef.current / 1.6, 0, 1);
+        easedT = easeOutCubic(t);
+        introXOffset = (columns + 10) * (1 - easedT) - 10 * easedT;
+        if (introTimeRef.current >= 1.6) {
+          introPhaseRef.current = 'done';
+          sessionStorage.setItem(HAS_PLAYED_KEY, 'true');
+        }
+      }
+
+      const waveY = (col: number, t: number) => {
+        return (
+          rows * 0.75
+          + Math.sin(col * 0.05 + t * 0.4) * 3
+          + Math.sin(col * 0.1 + t * 0.6) * 1.5
+          + Math.sin(col * 0.02 + t * 0.2) * 2
+        );
+      };
+
+      const bandWidthFunc = (col: number, t: number) => {
+        return 5 + Math.sin(col * 0.1 + t * 0.3) * 2;
+      };
 
       // 1. Clear canvas
       ctx.fillStyle = COLOR_BG;
@@ -187,25 +237,41 @@ const PixelWaveBackground: React.FC = () => {
 
           const wY = waveY(c, time);
           const bw = bandWidthFunc(c, time);
+          let isOceanOrFoam = false;
 
           if (r > wY + bw) {
-            // Below the wave band (deep sea body)
-            // Reduced max opacity from 0.85 to 0.35 to be non-obtrusive
-            opacity = 0.35 - 0.15 * (r / rows);
+            // BELOW wave front — ocean body (filled)
+            opacity = 0.22 - 0.10 * (r / rows);
             currentSizeRatio = cell.sizeRatio;
             color = COLOR_PRIMARY;
+            isOceanOrFoam = true;
           } else if (r >= wY - bw && r <= wY + bw) {
-            // In the wave band (foam/transition zone)
-            const positionInBand = r - (wY - bw); // 0 to 2*bw
+            // IN the wave front — foam/transition zone
+            const positionInBand = r - (wY - bw);
             const bandProgress = Math.max(0, Math.min(1, positionInBand / (2 * bw)));
-            opacity = bandProgress * 0.35;
-            currentSizeRatio = 0.3 + bandProgress * 0.5; // Start small and grow to normal size
+            opacity = bandProgress * 0.22;
+            currentSizeRatio = 0.3 + bandProgress * 0.5;
             color = COLOR_PRIMARY;
+            isOceanOrFoam = true;
           } else {
-            // Above wave band (empty)
-            opacity = 1; // Alpha handled by COLOR_WHITE
-            currentSizeRatio = 1; // Full cell for empty
+            // ABOVE wave front — empty (dark)
+            opacity = 1;
+            currentSizeRatio = 1;
             color = COLOR_WHITE;
+          }
+
+          // Apply right-to-left sweep mask during intro
+          if (introPhaseRef.current === 'entering') {
+            const sweepEdge = introXOffset + Math.sin(r * 0.1 + time * 0.5) * 3;
+            if (c < sweepEdge) {
+               // Mask out ocean/foam if it's to the left of the sweeping edge
+               opacity = 1;
+               currentSizeRatio = 1;
+               color = COLOR_WHITE;
+               isOceanOrFoam = false;
+            } else if (isOceanOrFoam) {
+               opacity *= easedT;
+            }
           }
 
           if (r * CELL_SIZE < 56) {
@@ -237,11 +303,9 @@ const PixelWaveBackground: React.FC = () => {
 
       ctx.globalAlpha = 1;
 
-      // Drift Particle System — particles are decoupled from the grid and move in
-      // world-space. Tune PARTICLE_MAX_SPEED for faster drift, PARTICLE_LERP for
-      // snappier direction changes, CURRENT_STRENGTH for tidal bias.
+      // Drift Particle System
       const currentDriftX = Math.sin(time * 0.04) * CURRENT_STRENGTH;
-      const currentDriftY = Math.cos(time * 0.025) * 0.03; // very minor vertical drift
+      const currentDriftY = Math.cos(time * 0.025) * 0.03;
 
       particlesRef.current.forEach(particle => {
         // 1. Direction nudge timer
@@ -249,10 +313,10 @@ const PixelWaveBackground: React.FC = () => {
         if (particle.changeTimer <= 0) {
           particle.targetVx = (Math.random() - 0.5) * PARTICLE_MAX_SPEED;
           particle.targetVy = (Math.random() - 0.5) * 0.18; // slightly less vertical drift
-          
+
           particle.targetVx += currentDriftX;
           particle.targetVy += currentDriftY;
-          
+
           particle.changeInterval = 180 + Math.floor(Math.random() * 240);
           particle.changeTimer = particle.changeInterval;
         }
@@ -272,15 +336,22 @@ const PixelWaveBackground: React.FC = () => {
         if (particle.y > canvas.height + 10) particle.y = -10;
 
         // 5. Opacity drift
-        const c = particle.x / CELL_SIZE;
-        const r = particle.y / CELL_SIZE;
-        const wY = waveY(c, time);
-        const bw = bandWidthFunc(c, time);
+        const pCol = particle.x / CELL_SIZE;
+        const pRow = particle.y / CELL_SIZE;
+        const wY = waveY(pCol, time);
+        const bw = bandWidthFunc(pCol, time);
 
-        let baseTargetOpacity = 0.25 + Math.abs(Math.sin(time * 0.3 + particle.phase)) * 0.55;
-        
-        // Hide particles if they are in the ocean wave pixels (below the top edge of the wave foam)
-        if (r >= wY - bw) {
+        let baseTargetOpacity = 0.08 + Math.abs(Math.sin(time * 0.3 + particle.phase)) * 0.15;
+
+        // Hide particles if they are in the ocean wave pixels
+        let inOcean = pRow >= wY - bw;
+        if (introPhaseRef.current === 'entering') {
+           const sweepEdge = introXOffset + Math.sin(pRow * 0.1 + time * 0.5) * 3;
+           if (pCol < sweepEdge) {
+              inOcean = false;
+           }
+        }
+        if (inOcean) {
           baseTargetOpacity = 0;
         }
 
@@ -292,7 +363,7 @@ const PixelWaveBackground: React.FC = () => {
           ctx.save();
           ctx.globalAlpha = particle.opacity;
           ctx.fillStyle = COLOR_SECONDARY;
-          
+
           const half = particle.size / 2;
           ctx.beginPath();
           if (ctx.roundRect) {
