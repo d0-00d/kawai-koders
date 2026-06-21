@@ -171,21 +171,21 @@
     );
   }
 
-  /* ── Glassmorphism hero panel ─────────────────────────────────
-     Desktop shape is defined inline in Landing.tsx.
-     Mobile: set simpler values via .glass-hero-panel class here.
-  ──────────────────────────────────────────────────────────── */
-  /* base class — just a hook for the mobile override below */
-  .glass-hero-panel {
-    /* intentionally empty; desktop shape is in inline styles */
+  /* pulse dot & CTA classes — keyframes defined globally below */
+  .hero-pulse-dot {
+    animation: pulse-breathe 1.6s ease-in-out infinite;
+    box-shadow: 0 0 4px rgba(129,178,217,0.8);
+  }
+
+  .hero-cta:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 4px;
+    box-shadow: 0 0 0 4px rgba(129,178,217,0.22);
   }
 }
 
-/* ── Glass hero panel — mobile (<768 px) ───────────────────────────────── */
-@media (max-width: 767px) {
-  .glass-hero-panel {
-    width: 100% !important;
-    border-radius: 0 !important;
-    border-right: none !important;
-  }
+/* ── Global keyframes (must be outside @layer for reliable scoping) ── */
+@keyframes pulse-breathe {
+  0%, 100% { opacity: 0.28; }
+  50%       { opacity: 1.00; }
 }
