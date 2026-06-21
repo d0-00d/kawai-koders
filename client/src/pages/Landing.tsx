@@ -17,55 +17,6 @@ const Landing = () => {
       <main className="relative top-0 min-h-screen flex items-center overflow-hidden">
         <PixelWaveBackground />
 
-        {/*
-          ── Glassmorphism panel — simple frosted rectangle ──────
-          • Bleeds off left viewport edge  (left: -2px, no left border)
-          • Bleeds off bottom              (bottom: -2px, no bottom border)
-          • top: 56px → starts right below the fixed navbar
-          • Rounded only on the right side (top-right + bottom-right)
-          • backdrop-filter: blur(20px) — actual frosted glass over shader
-        */}
-        <div
-          aria-hidden="true"
-          className="glass-hero-panel"
-          style={{
-            position: 'absolute',
-            top: '56px',          /* start below 56px fixed navbar */
-            left: '-2px',         /* micro-bleed so no left border shows */
-            bottom: '-2px',       /* micro-bleed so no bottom border shows */
-            width: '52%',         /* covers text block with generous breathing room */
-            zIndex: 10,
-            pointerEvents: 'none',
-
-            /* Frosted glass fill — Static White (#DCDCDD) at 10 % */
-            background: 'rgba(220, 220, 221, 0.10)',
-            WebkitBackdropFilter: 'blur(20px)',
-            backdropFilter:       'blur(20px)',
-
-            /*
-              Rounded only on the right side.
-              top-left: 0  (against nav / bleeds left)
-              top-right: 40px
-              bottom-right: 40px
-              bottom-left: 0  (bleeds off bottom)
-            */
-            borderRadius: '0 40px 40px 0',
-
-            /*
-              Border only on visible edges (top + right + bottom).
-              Left edge is hidden by the -2px bleed.
-              Signal Blue at 25 % for the glass-edge highlight.
-            */
-            borderTop:    '1px solid rgba(129, 178, 217, 0.25)',
-            borderRight:  '1px solid rgba(129, 178, 217, 0.25)',
-            borderBottom: 'none',   /* bleeds off */
-            borderLeft:   'none',   /* bleeds off */
-
-            /* Soft depth lift */
-            boxShadow: '6px 0 40px rgba(20, 5, 1, 0.30)',
-          }}
-        />
-
 
         <div
           className="relative z-20 container mx-auto px-8 md:px-16 pt-[56px] flex flex-col items-start text-left"
