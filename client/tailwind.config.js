@@ -9,13 +9,14 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
         display: ['Bodoni Moda', 'sans-serif'],
+        pixel: ['Share Tech Mono', 'monospace'],
       },
       colors: {
         bg: 'var(--color-bg)',
         surface: 'var(--color-surface)',
+        'surface-dim': 'var(--color-surface-dim)',
         border: 'var(--color-border)',
         primary: 'var(--color-primary)',
-        secondary: 'var(--color-secondary)',
         text: 'var(--color-text)',
         muted: 'var(--color-muted)',
       }
