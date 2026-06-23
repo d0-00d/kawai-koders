@@ -147,7 +147,7 @@ const Landing = () => {
                 transitionDelay: '200ms',
               }}
             >
-              Lorem ipsum your mom kinda gay
+              Lorem ipsum
             </p>
 
             {/* ── 4. CTA button ───────────────────────────────── */}
@@ -162,15 +162,15 @@ const Landing = () => {
 
                 // State-driven colours
                 background: ctaHovered ? '#030514' : 'var(--color-primary)',
-                color:      ctaHovered ? 'var(--color-primary)' : 'var(--color-bg)',
-                border:     ctaHovered
+                color: ctaHovered ? 'var(--color-primary)' : 'var(--color-bg)',
+                border: ctaHovered
                   ? '1px solid var(--color-primary)'
                   : '1px solid transparent',
                 boxShadow: ctaPressed
                   ? 'inset 0 2px 6px rgba(0,0,0,0.55), inset 0 1px 2px rgba(0,0,0,0.4)'
                   : ctaHovered
-                  ? 'var(--pixel-glow)'
-                  : 'var(--pixel-glow)',
+                    ? 'var(--pixel-glow)'
+                    : 'var(--pixel-glow)',
 
                 // Entrance: CTA last (delay 320ms)
                 opacity: mounted ? 1 : 0,
@@ -252,11 +252,9 @@ const Landing = () => {
         <div
           className="h-[2px] transition-all duration-500"
           style={{
-            background: `linear-gradient(90deg, transparent 0%, var(--color-primary) ${
-              ((tabs.indexOf(activeTab) + 1) / tabs.length) * 100
-            }%, transparent ${
-              ((tabs.indexOf(activeTab) + 1) / tabs.length) * 100
-            }%)`,
+            background: `linear-gradient(90deg, transparent 0%, var(--color-primary) ${((tabs.indexOf(activeTab) + 1) / tabs.length) * 100
+              }%, transparent ${((tabs.indexOf(activeTab) + 1) / tabs.length) * 100
+              }%)`,
             opacity: 0.6,
           }}
         />

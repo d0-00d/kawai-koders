@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Landing from './pages/Landing';
 import SignIn from './pages/SignIn';
+import GallerySignifier from './components/GallerySignifier';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/signin" element={<SignIn />} />
       </Routes>
+      <GallerySignifier />
     </BrowserRouter>
   );
 }

@@ -16,30 +16,38 @@
   :root {
     /* ── Design-system palette ─────────────────────────────── */
     /* 60 % Base */
-    --color-bg:          #140501;   /* Void Black   */
+    --color-bg: #140501;
+    /* Void Black   */
     /* 30 % Secondary */
-    --color-surface:     #B57D7D;   /* Ash Rose     */
-    --color-surface-dim: rgba(181,125,125,0.12); /* Ash Rose @ 12 % */
+    --color-surface: #B57D7D;
+    /* Ash Rose     */
+    --color-surface-dim: rgba(181, 125, 125, 0.12);
+    /* Ash Rose @ 12 % */
     /* 10 % Accent */
-    --color-primary:     #81B2D9;   /* Signal Blue  */
+    --color-primary: #81B2D9;
+    /* Signal Blue  */
     /* Support */
-    --color-text:        #DCDCDD;   /* Static White */
-    --color-muted:       #D9E1E9;   /* Mist Blue    */
-    --color-border:      rgba(129,178,217,0.18); /* Signal Blue @ 18 % */
-    --color-white:       #ffffff;
-    --color-black:       #000000;
+    --color-text: #DCDCDD;
+    /* Static White */
+    --color-muted: #D9E1E9;
+    /* Mist Blue    */
+    --color-border: rgba(129, 178, 217, 0.18);
+    /* Signal Blue @ 18 % */
+    --color-white: #ffffff;
+    --color-black: #000000;
 
     /* ── Pixel UI tokens ───────────────────────────────────── */
-    --pixel-font:        'Share Tech Mono', monospace;
-    --pixel-border:      2px solid var(--color-primary);
+    --pixel-font: 'Share Tech Mono', monospace;
+    --pixel-border: 2px solid var(--color-primary);
     --pixel-border-rose: 2px solid var(--color-surface);
-    --pixel-glow:        0 0 8px rgba(129,178,217,0.55),
-                         0 0 20px rgba(129,178,217,0.25);
-    --pixel-glow-rose:   0 0 8px rgba(181,125,125,0.55),
-                         0 0 20px rgba(181,125,125,0.25);
+    --pixel-glow: 0 0 8px rgba(129, 178, 217, 0.55),
+      0 0 20px rgba(129, 178, 217, 0.25);
+    --pixel-glow-rose: 0 0 8px rgba(181, 125, 125, 0.55),
+      0 0 20px rgba(181, 125, 125, 0.25);
   }
 
-  html, body {
+  html,
+  body {
     margin: 0;
     padding: 0;
     background: var(--color-bg);
@@ -49,6 +57,7 @@
 }
 
 @layer components {
+
   /* ── Pixel-UI tab button ───────────────────────────────────
      Retro game-menu aesthetic:
      - monospace pixel font
@@ -68,14 +77,12 @@
     position: relative;
     cursor: pointer;
     transition: color 0.15s, border-color 0.15s, box-shadow 0.15s;
-    clip-path: polygon(
-      0 0,
-      calc(100% - 6px) 0,
-      100% 6px,
-      100% 100%,
-      6px 100%,
-      0 calc(100% - 6px)
-    );
+    clip-path: polygon(0 0,
+        calc(100% - 6px) 0,
+        100% 6px,
+        100% 100%,
+        6px 100%,
+        0 calc(100% - 6px));
     overflow: hidden;
   }
 
@@ -84,13 +91,11 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      rgba(255,255,255,0.025) 0px,
-      rgba(255,255,255,0.025) 1px,
-      transparent 1px,
-      transparent 3px
-    );
+    background: repeating-linear-gradient(0deg,
+        rgba(255, 255, 255, 0.025) 0px,
+        rgba(255, 255, 255, 0.025) 1px,
+        transparent 1px,
+        transparent 3px);
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s;
@@ -111,7 +116,7 @@
 
   .pixel-tab:hover {
     color: var(--color-text);
-    border-color: rgba(129,178,217,0.35);
+    border-color: rgba(129, 178, 217, 0.35);
   }
 
   .pixel-tab:hover::before {
@@ -126,7 +131,7 @@
     color: var(--color-primary);
     border-color: var(--color-primary);
     box-shadow: var(--pixel-glow);
-    background: rgba(129,178,217,0.06);
+    background: rgba(129, 178, 217, 0.06);
   }
 
   .pixel-tab.active::before {
@@ -139,17 +144,15 @@
 
   /* ── Pixel-UI tab bar container ────────────────────────────── */
   .pixel-tab-bar {
-    background: rgba(20,5,1,0.82);
+    background: rgba(20, 5, 1, 0.82);
     backdrop-filter: blur(14px) saturate(140%);
-    border-bottom: 2px solid rgba(129,178,217,0.18);
+    border-bottom: 2px solid rgba(129, 178, 217, 0.18);
     /* subtle scanline overlay on the bar itself */
-    background-image: repeating-linear-gradient(
-      0deg,
-      rgba(255,255,255,0.012) 0px,
-      rgba(255,255,255,0.012) 1px,
-      transparent 1px,
-      transparent 4px
-    );
+    background-image: repeating-linear-gradient(0deg,
+        rgba(255, 255, 255, 0.012) 0px,
+        rgba(255, 255, 255, 0.012) 1px,
+        transparent 1px,
+        transparent 4px);
   }
 
   /* ── Pixel badge / label ─────────────────────────────────── */
@@ -161,31 +164,36 @@
     color: var(--color-primary);
     border: 1px solid var(--color-primary);
     padding: 0.2rem 0.6rem;
-    clip-path: polygon(
-      0 0,
-      calc(100% - 4px) 0,
-      100% 4px,
-      100% 100%,
-      4px 100%,
-      0 calc(100% - 4px)
-    );
+    clip-path: polygon(0 0,
+        calc(100% - 4px) 0,
+        100% 4px,
+        100% 100%,
+        4px 100%,
+        0 calc(100% - 4px));
   }
 
   /* pulse dot & CTA classes — keyframes defined globally below */
   .hero-pulse-dot {
     animation: pulse-breathe 1.6s ease-in-out infinite;
-    box-shadow: 0 0 4px rgba(129,178,217,0.8);
+    box-shadow: 0 0 4px rgba(129, 178, 217, 0.8);
   }
 
   .hero-cta:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 4px;
-    box-shadow: 0 0 0 4px rgba(129,178,217,0.22);
+    box-shadow: 0 0 0 4px rgba(129, 178, 217, 0.22);
   }
 }
 
 /* ── Global keyframes (must be outside @layer for reliable scoping) ── */
 @keyframes pulse-breathe {
-  0%, 100% { opacity: 0.28; }
-  50%       { opacity: 1.00; }
+
+  0%,
+  100% {
+    opacity: 0.28;
+  }
+
+  50% {
+    opacity: 1.00;
+  }
 }
