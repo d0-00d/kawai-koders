@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;500;700&display=swap');
 
 @font-face {
   font-family: 'Bodoni Moda';
@@ -16,7 +16,7 @@
   :root {
     /* ── Design-system palette ─────────────────────────────── */
     /* 60 % Base */
-    --color-bg: #140501;
+    --color-bg: #050505;
     /* Void Black   */
     /* 30 % Secondary */
     --color-surface: #B57D7D;
@@ -24,17 +24,26 @@
     --color-surface-dim: rgba(181, 125, 125, 0.12);
     /* Ash Rose @ 12 % */
     /* 10 % Accent */
-    --color-primary: #81B2D9;
+    --color-primary: #A8D8FF;
     /* Signal Blue  */
     /* Support */
-    --color-text: #DCDCDD;
+    --color-text: #FFFFFF;
     /* Static White */
     --color-muted: #D9E1E9;
     /* Mist Blue    */
-    --color-border: rgba(129, 178, 217, 0.18);
-    /* Signal Blue @ 18 % */
+    --color-border: rgba(255, 255, 255, 0.06);
+    /* White @ 12 % */
     --color-white: #ffffff;
     --color-black: #000000;
+
+    /* ── New KOHNRAD palette tokens ─────────────────────────── */
+    --kohnrad-gunmetal: #151515;
+    --kohnrad-signal-blue: #A8D8FF;
+    --kohnrad-ash-rose: #B57D7D;
+    --kohnrad-void-black: #050505;
+    --kohnrad-glass: rgba(255, 255, 255, 0.05);
+    --kohnrad-outline: rgba(255, 255, 255, 0.06);
+    --kohnrad-outline-variant: rgba(255, 255, 255, 0.08);
 
     /* ── Pixel UI tokens ───────────────────────────────────── */
     --pixel-font: 'Share Tech Mono', monospace;
@@ -44,27 +53,31 @@
       0 0 20px rgba(129, 178, 217, 0.25);
     --pixel-glow-rose: 0 0 8px rgba(181, 125, 125, 0.55),
       0 0 20px rgba(181, 125, 125, 0.25);
+
+    /* ── New font references ─────────────────────────────── */
+    --font-headline: 'DM Serif Display', serif;
+    --font-mono-data: 'JetBrains Mono', monospace;
+    --font-body: 'Inter', sans-serif;
+    --font-pixel: 'Share Tech Mono', monospace;
+  }
+
+  html {
+    background: #050505; /* fallback while WebGL shader loads */
   }
 
   html,
   body {
     margin: 0;
     padding: 0;
-    background: var(--color-bg);
+    /* body background intentionally omitted — ObsidianShader WebGL canvas owns it */
     color: var(--color-text);
-    @apply antialiased;
+    @apply antialiased overflow-x-hidden;
   }
 }
 
 @layer components {
 
-  /* ── Pixel-UI tab button ───────────────────────────────────
-     Retro game-menu aesthetic:
-     - monospace pixel font
-     - hard 2px border, no border-radius
-     - scanline shimmer on hover via ::before pseudo
-     - active state lights up with Signal-Blue glow
-  ──────────────────────────────────────────────────────────── */
+  /* ── Pixel-UI tab button ───────────────────────────────────── */
   .pixel-tab {
     font-family: var(--pixel-font);
     font-size: 0.72rem;
@@ -86,7 +99,6 @@
     overflow: hidden;
   }
 
-  /* scanline shimmer layer */
   .pixel-tab::before {
     content: '';
     position: absolute;
@@ -101,7 +113,6 @@
     transition: opacity 0.2s;
   }
 
-  /* corner-pixel accent (top-right) */
   .pixel-tab::after {
     content: '';
     position: absolute;
@@ -142,12 +153,11 @@
     opacity: 1;
   }
 
-  /* ── Pixel-UI tab bar container ────────────────────────────── */
+  /* ── Pixel-UI tab bar container ─────────────────────────────── */
   .pixel-tab-bar {
-    background: rgba(20, 5, 1, 0.82);
+    background: rgba(5, 5, 5, 0.82);
     backdrop-filter: blur(14px) saturate(140%);
     border-bottom: 2px solid rgba(129, 178, 217, 0.18);
-    /* subtle scanline overlay on the bar itself */
     background-image: repeating-linear-gradient(0deg,
         rgba(255, 255, 255, 0.012) 0px,
         rgba(255, 255, 255, 0.012) 1px,
@@ -155,7 +165,7 @@
         transparent 4px);
   }
 
-  /* ── Pixel badge / label ─────────────────────────────────── */
+  /* ── Pixel badge / label ────────────────────────────────────── */
   .pixel-badge {
     font-family: var(--pixel-font);
     font-size: 0.65rem;
@@ -172,7 +182,7 @@
         0 calc(100% - 4px));
   }
 
-  /* pulse dot & CTA classes — keyframes defined globally below */
+  /* ── Pulse dot & CTA ─────────────────────────────────────────── */
   .hero-pulse-dot {
     animation: pulse-breathe 1.6s ease-in-out infinite;
     box-shadow: 0 0 4px rgba(129, 178, 217, 0.8);
@@ -183,9 +193,148 @@
     outline-offset: 4px;
     box-shadow: 0 0 0 4px rgba(129, 178, 217, 0.22);
   }
+
+  /* ── KOHNRAD Research — Section cards ───────────────────────── */
+  .pixel-card {
+    background: #0d0d0d;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .pixel-card:hover {
+    background: #151515;
+    border-color: #81B2D9;
+  }
+
+  /* ── KOHNRAD Research — Label mono style ───────────────────── */
+  .label-mono {
+    font-family: var(--font-mono-data);
+    font-size: 10px;
+    line-height: 1;
+    letter-spacing: 0.08em;
+    font-weight: 300;
+    text-transform: uppercase;
+  }
+
+  /* ── KOHNRAD Research — Glitch hover ────────────────────────── */
+  .glitch-hover:hover {
+    animation: rgb-split 0.15s ease-in-out infinite alternate;
+  }
+
+  /* ── KOHNRAD Research — Section divider label ───────────────── */
+  .section-label {
+    font-family: var(--font-mono-data);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    font-weight: 300;
+    text-transform: uppercase;
+    color: var(--kohnrad-signal-blue);
+    margin-bottom: 1rem;
+  }
+
+  /* ── Math overlay decorative ────────────────────────────────── */
+  .math-overlay {
+    position: absolute;
+    font-family: 'JetBrains Mono', monospace;
+    color: rgba(255, 255, 255, 0.04);
+    pointer-events: none;
+    z-index: 0;
+    white-space: pre;
+    line-height: 1.2;
+    font-size: 11px;
+  }
+
+  /* ── Grain effect overlay ───────────────────────────────────── */
+  .grain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.03;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+    animation: gs 0.4s steps(4) infinite;
+  }
+
+  /* ── Benchmark graph line ────────────────────────────────────── */
+  .bench-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 0.5rem;
+  }
+
+  /* ── Atmospheric CSS background ─────────────────────────────── */
+  /*
+     Three slowly-breathing radial gradients on Void Black:
+       1. Signal-Blue bloom — top-left  (blueprint ink seeping in)
+       2. Ash-Rose warmth  — bottom-right (subtle warmth)
+       3. Gunmetal centre  — dead centre  (slight surface lift)
+     All at very low opacity so the dark base dominates.
+     An infinite CSS animation shifts the gradients slowly,
+     mimicking the organic drift of the original shader.
+  */
+  .kohnrad-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-color: #050505;
+    background-image:
+      /* Signal-Blue bloom — top-left, larger & brighter */
+      radial-gradient(ellipse 80% 70% at -8% 0%,
+        rgba(129, 178, 217, 0.22) 0%,
+        rgba(129, 178, 217, 0.06) 45%,
+        transparent 70%),
+      /* Ash-Rose warmth — bottom-right */
+      radial-gradient(ellipse 70% 65% at 108% 105%,
+        rgba(181, 125, 125, 0.18) 0%,
+        rgba(181, 125, 125, 0.05) 45%,
+        transparent 68%),
+      /* Gunmetal surface lift — centre */
+      radial-gradient(ellipse 90% 70% at 50% 50%,
+        rgba(62, 76, 89, 0.14) 0%,
+        transparent 75%);
+    animation: bg-breathe 24s ease-in-out infinite alternate;
+  }
 }
 
-/* ── Global keyframes (must be outside @layer for reliable scoping) ── */
+/* ── Global keyframes ─────────────────────────────────────────── */
+@keyframes bg-breathe {
+  0% {
+    background-image:
+      radial-gradient(ellipse 80% 70% at -8%  0%,   rgba(129, 178, 217, 0.22) 0%, rgba(129, 178, 217, 0.06) 45%, transparent 70%),
+      radial-gradient(ellipse 70% 65% at 108% 105%,  rgba(181, 125, 125, 0.18) 0%, rgba(181, 125, 125, 0.05) 45%, transparent 68%),
+      radial-gradient(ellipse 90% 70% at 50%  50%,   rgba(62,  76,  89,  0.14) 0%, transparent 75%);
+  }
+
+  33% {
+    background-image:
+      radial-gradient(ellipse 88% 78% at -4%  5%,   rgba(129, 178, 217, 0.26) 0%, rgba(129, 178, 217, 0.07) 45%, transparent 70%),
+      radial-gradient(ellipse 64% 58% at 104% 98%,   rgba(181, 125, 125, 0.13) 0%, rgba(181, 125, 125, 0.04) 45%, transparent 68%),
+      radial-gradient(ellipse 85% 75% at 54%  46%,   rgba(62,  76,  89,  0.18) 0%, transparent 75%);
+  }
+
+  66% {
+    background-image:
+      radial-gradient(ellipse 72% 62% at -10%  2%,   rgba(129, 178, 217, 0.17) 0%, rgba(129, 178, 217, 0.05) 45%, transparent 70%),
+      radial-gradient(ellipse 78% 72% at 110% 102%,  rgba(181, 125, 125, 0.22) 0%, rgba(181, 125, 125, 0.06) 45%, transparent 68%),
+      radial-gradient(ellipse 95% 65% at 47%  54%,   rgba(62,  76,  89,  0.11) 0%, transparent 75%);
+  }
+
+  100% {
+    background-image:
+      radial-gradient(ellipse 84% 74% at -6%  3%,   rgba(129, 178, 217, 0.24) 0%, rgba(129, 178, 217, 0.06) 45%, transparent 70%),
+      radial-gradient(ellipse 68% 62% at 106% 100%,  rgba(181, 125, 125, 0.16) 0%, rgba(181, 125, 125, 0.05) 45%, transparent 68%),
+      radial-gradient(ellipse 88% 72% at 51%  49%,   rgba(62,  76,  89,  0.15) 0%, transparent 75%);
+  }
+}
+
 @keyframes pulse-breathe {
 
   0%,
@@ -196,4 +345,98 @@
   50% {
     opacity: 1.00;
   }
+}
+
+@keyframes rgb-split {
+  0% {
+    text-shadow: -1px 0 rgba(255, 255, 255, 0.5), 1px 0 rgba(168, 216, 255, 0.5);
+    transform: translate(-1px, 0);
+  }
+
+  50% {
+    text-shadow: 1px 0 rgba(255, 255, 255, 0.5), -1px 0 rgba(168, 216, 255, 0.5);
+    transform: translate(1px, 0);
+  }
+
+  100% {
+    text-shadow: 0 -1px rgba(255, 255, 255, 0.5), 0 1px rgba(168, 216, 255, 0.5);
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes gs {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(-4px, 3px);
+  }
+
+  75% {
+    transform: translate(3px, -4px);
+  }
+
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Grain overlay ─────────────────────────────────────────── */
+.grain {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+  animation: gs 0.4s steps(4) infinite;
+}
+@keyframes gs {
+  0%   { transform: translate(0, 0);    }
+  25%  { transform: translate(-4px, 3px); }
+  75%  { transform: translate(3px, -4px); }
+  100% { transform: translate(0, 0);    }
+}
+
+/* ── Math overlays ─────────────────────────────────────────── */
+.math-overlay {
+  position: absolute;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  z-index: 0;
+  white-space: pre;
+  line-height: 1.2;
+}
+
+/* ── Pixel card ────────────────────────────────────────────── */
+.pixel-card {
+  background: #0d0d0d;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pixel-card:hover {
+  background: #151515;
+  border-color: #A8D8FF;
 }

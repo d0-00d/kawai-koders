@@ -1,36 +1,27 @@
 // client/src/components/Navbar.tsx
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+
+const NAV_LINKS = ['Nav Link 1', 'Nav Link 2', 'Nav Link 3'];
 
 const Navbar = () => {
-  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 60);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 h-[56px] z-50 flex items-center justify-between px-8 transition-all duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-        isScrolled
-          ? 'backdrop-blur-[14px] backdrop-saturate-[140%]'
-          : 'backdrop-blur-none'
-      }`}
+      className={`fixed top-0 left-0 right-0 h-16 z-50 flex items-center justify-between px-unit-lg transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]`}
       style={{
         background: isScrolled
-          ? 'rgba(20,5,1,0.82)'
-          : 'transparent',
-        borderBottom: isScrolled
-          ? '2px solid rgba(129,178,217,0.22)'
-          : '2px solid transparent',
-        boxShadow: isScrolled
-          ? '0 4px 24px rgba(20,5,1,0.6), 0 0 0 0.5px rgba(129,178,217,0.08)'
-          : 'none',
+          ? 'rgba(5,5,5,0.88)'
+          : 'rgba(5,5,5,0.5)',
+        borderBottom: `1px solid ${isScrolled ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.06)'}`,
+        backdropFilter: 'blur(20px) saturate(140%)',
         backgroundImage: isScrolled
           ? `repeating-linear-gradient(
               0deg,
@@ -42,77 +33,123 @@ const Navbar = () => {
           : 'none',
       }}
     >
-      {/* ── Logo ──────────────────────────────────────────────── */}
+      {/* ── Logo ───────────────────────────────────────────────── */}
       <div className="flex items-center">
         <Link
           to="/"
-          className="text-2xl font-bold tracking-[0.12em] font-display uppercase"
+          className="glitch-hover flex items-center gap-1"
           style={{
-            color: 'var(--color-text)',
-            textShadow: '0 0 20px rgba(129,178,217,0.3)',
+            fontFamily: 'DM Serif Display, serif',
+            fontSize: '20px',
+            lineHeight: '1.3',
+            letterSpacing: '-0.01em',
+            color: '#ffffff',
           }}
         >
-          Kohnrad
+          KOHNRAD
+          <span
+            aria-hidden="true"
+            style={{
+              display: 'inline-block',
+              width: '4px',
+              height: '4px',
+              borderRadius: '50%',
+              background: '#81B2D9',
+              marginLeft: '2px',
+              marginBottom: '4px',
+              opacity: 0.9,
+            }}
+          />
         </Link>
-      </div>
-
-      {/* ── Centre nav links (pixel style) ────────────────────── */}
-      <div
-        className="hidden md:flex space-x-6 absolute left-1/2 transform -translate-x-1/2"
-        style={{ fontFamily: 'var(--pixel-font)' }}
-      >
-        {['Sub Tab 1', 'Sub Tab 2', 'Sub Tab 3', 'Sub Tab 4', 'Sub Tab 5'].map(
-          (label) => (
-            <span
-              key={label}
-              className="cursor-pointer text-[0.65rem] uppercase tracking-[0.12em] transition-all duration-200"
-              style={{ color: 'rgba(217,225,233,0.55)' }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLSpanElement).style.color =
-                  'var(--color-primary)';
-                (e.currentTarget as HTMLSpanElement).style.textShadow =
-                  '0 0 10px rgba(129,178,217,0.5)';
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLSpanElement).style.color =
-                  'rgba(217,225,233,0.55)';
-                (e.currentTarget as HTMLSpanElement).style.textShadow = 'none';
-              }}
-            >
-              {label}
-            </span>
-          ),
-        )}
-      </div>
-
-      {/* ── Sign-In (pixel button) ─────────────────────────────── */}
-      <div className="flex items-center">
-        <button
-          id="navbar-signin-btn"
-          onClick={() => navigate('/signin')}
-          className="text-[0.65rem] uppercase tracking-[0.12em] px-5 py-2 transition-all duration-200"
+        <span
+          className="hidden md:block ml-4 pl-4"
           style={{
-            fontFamily: 'var(--pixel-font)',
-            color: 'var(--color-primary)',
-            background: 'transparent',
-            border: '2px solid rgba(129,178,217,0.5)',
-            clipPath:
-              'polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px))',
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '10px',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: 'rgba(255,255,255,0.45)',
+            borderLeft: '1px solid rgba(255,255,255,0.12)',
+          }}
+        >
+          Research_Lab
+        </span>
+      </div>
+
+      {/* ── Centre Nav Links ───────────────────────────────────── */}
+      <div className="hidden md:flex gap-unit-lg absolute left-1/2 -translate-x-1/2">
+        {NAV_LINKS.map((label, i) => (
+          <a
+            key={label}
+            href="#"
+            className="flex flex-col items-center group relative"
+            style={{
+              fontFamily: 'JetBrains Mono, monospace',
+              fontSize: '10px',
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: i === 0 ? '#ffffff' : 'rgba(255,255,255,0.45)',
+              textDecoration: 'none',
+              padding: '4px 8px',
+              transition: 'color 0.2s ease',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLAnchorElement).style.color = '#81B2D9';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLAnchorElement).style.color =
+                i === 0 ? '#ffffff' : 'rgba(255,255,255,0.45)';
+            }}
+          >
+            {/* Active indicator tick */}
+            <span
+              aria-hidden="true"
+              style={{
+                display: 'block',
+                width: '1px',
+                height: i === 0 ? '8px' : '4px',
+                background: i === 0 ? '#81B2D9' : 'rgba(255,255,255,0.18)',
+                marginBottom: '4px',
+                transition: 'height 0.2s ease, background 0.2s ease',
+              }}
+            />
+            {label}
+          </a>
+        ))}
+      </div>
+
+      {/* ── CTA Button ─────────────────────────────────────────── */}
+      <div>
+        <button
+          id="navbar-cta-btn"
+          style={{
+            fontFamily: 'JetBrains Mono, monospace',
+            fontSize: '10px',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: '#050505',
+            background: 'rgba(255,255,255,0.90)',
+            border: 'none',
+            padding: '10px 24px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
           }}
           onMouseEnter={e => {
             const el = e.currentTarget as HTMLButtonElement;
-            el.style.background = 'var(--color-primary)';
-            el.style.color = 'var(--color-bg)';
-            el.style.boxShadow = 'var(--pixel-glow)';
+            el.style.background = '#81B2D9';
+            el.style.color = '#050505';
+            el.style.boxShadow = '0 0 15px rgba(129,178,217,0.35)';
+            el.style.transform = 'translateY(-1px)';
           }}
           onMouseLeave={e => {
             const el = e.currentTarget as HTMLButtonElement;
-            el.style.background = 'transparent';
-            el.style.color = 'var(--color-primary)';
+            el.style.background = 'rgba(255,255,255,0.90)';
+            el.style.color = '#050505';
             el.style.boxShadow = 'none';
+            el.style.transform = 'translateY(0)';
           }}
         >
-          ▸ Sign In
+          CTA Action
         </button>
       </div>
     </nav>
